@@ -4,15 +4,19 @@ import os
 import random
 from SSDWT import *
 from SSPCA import *
+from SSLDAGMM import *
+from SSTSNE import *
 from LoadingData import *
 from DeafaultParams import *
 from ClusteringandEvaluation import *
 
-os.environ["OMP_NUM_THREADS"] = "3" # export OMP_NUM_THREADS
-os.environ["OPENBLAS_NUM_THREADS"] = "3" # export OPENBLAS_NUM_THREADS
-os.environ["MKL_NUM_THREADS"] = "3" # export MKL_NUM_THREADS
-os.environ["VECLIB_MAXIMUM_THREADS"] = "3" # export VECLIB_MAXIMUM_THREADS
-os.environ["NUMEXPR_NUM_THREADS"] = "3" # export NUMEXPR_NUM_THREADS
+MaxNumofParThreads = "3"
+
+os.environ["OMP_NUM_THREADS"] = MaxNumofParThreads # export OMP_NUM_THREADS
+os.environ["OPENBLAS_NUM_THREADS"] = MaxNumofParThreads # export OPENBLAS_NUM_THREADS
+os.environ["MKL_NUM_THREADS"] = MaxNumofParThreads # export MKL_NUM_THREADS
+os.environ["VECLIB_MAXIMUM_THREADS"] = MaxNumofParThreads # export VECLIB_MAXIMUM_THREADS
+os.environ["NUMEXPR_NUM_THREADS"] = MaxNumofParThreads # export NUMEXPR_NUM_THREADS
 
 def FeatureExtraction(Data,Parametrs):
     if Parametrs['method']=='PCA':
