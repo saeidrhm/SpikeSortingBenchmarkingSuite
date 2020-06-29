@@ -36,7 +36,7 @@ def FeatureExtraction(Data,Parametrs):
         print("Cant recognize the method!")
 
 def main():
-    TemplateNamePre = "/home/saeid/spike_trains_cell_"
+    TemplateNamePre = "spike_trains_cell_"
     TemplateNamePost = "_NoInh_6_NoExt_6_noise_25_SS_68_TS_11_RS_42_cell_based_overlapping_suppressed.npy"
     NoCells = 12
     NoChannels = 4
@@ -48,7 +48,13 @@ def main():
     method = "AutoEncoder"
     FeatureExtractionDeafaultParametrs = InitFeatureExtractionDeafaultParametrs()
     FeatureExtractionDeafaultParametrs['method'] = method
+    if FeatureExtractionDeafaultParametrs['AutoEncoder_CNNModel']==True:
+        FeatureExtractionDeafaultParametrs['AutoEncoder_LayerArgList'] = [AutoEncoder_LayerArg for x in range(0,len(FeatureExtractionDeafaultParametrs['AutoEncoder_CNNStructure']))]
+    else:
+        FeatureExtractionDeafaultParametrs['AutoEncoder_LayerArgList'] = [AutoEncoder_LayerArg for x in range(0,len(FeatureExtractionDeafaultParametrs['AutoEncoder_MLPStructure']))]
+
     ExtractedFeatures = FeatureExtraction(SpikeChannelDataList,FeatureExtractionDeafaultParametrs)
+    UltResList = list()
     RetList = list()
     for clusteringmethod in ['kmeans','GMM']:
         ClusteringAndEvaluationDeafaultParametrs = InitClusteringAndEvaluationDeafaultParametrs()

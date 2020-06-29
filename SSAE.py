@@ -1,5 +1,7 @@
+from SSANNCommon import *
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+import tensorflow as tf
 import tensorflow.keras
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Conv1D, MaxPooling1D, Flatten, Dense, UpSampling1D, Dropout, Reshape
@@ -8,6 +10,10 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 import numpy as np
 from sklearn.model_selection import train_test_split
+from numpy.random import seed
+import os
+import random
+
 
 def AutoEncoder_MLP(MLPStructure, TrainParams, LayerArgList,img_rows):
     print("AutoEncoder_MLP::MLPStructure: "+str(MLPStructure))
@@ -46,8 +52,10 @@ def AutoEncoder_CNN(CNNStructure, TrainParams, LayerArgList,img_rows):
     print("AutoEncoder_CNN::CNNStructure: "+str(CNNStructure))
     count = 0
     NLayers = len(LayerArgList)
+    print("img_rows: "+str(img_rows))
+    print(LayerArgList)
     img_rows_shape_in_middle = img_rows
-    for i in range(0,int(NLayers)-1):
+    for i in range(0,int(NLayers-1)):
         img_rows_shape_in_middle/= LayerArgList[i]["CNN_MaxPooling_Size"]
     print("img_rows_shape_in_middle: "+str(img_rows_shape_in_middle))
     input_img = Input(shape=(img_rows,1))
@@ -153,7 +161,7 @@ def AutoEncoderTrainChan(X, Parametrs):
               optimizer=TrainParams['Optimizer'])
     print("Curr Model: ")
     print(autoencoder_model.summary())
-    callbacks = [GetBest(monitor='val_loss', verbose=1, mode='min')]
+    callbacks = [tf.keras.callbacks.EarlyStopping(patience=Parametrs["AutoEncoder_EarlyStopping_patience"]),GetBest(monitor='val_loss', verbose=1, mode='min')]
     if GaussianNoiseStD>0.0 :
         autoencoder_model.fit(x_train_noisy, x_train,
           batch_size=TrainParams["batch_size"],
@@ -196,6 +204,6 @@ def AutoEncoderTrainFeatureExtraction(Data,Parametrs):
     RetList = []
     for CurrChan in range(0,len(Data)):
         Parametrs["AutoEncoder_ChanNum"] = CurrChan
-        Parametrs["AutoEncoder_LoadModelFilename"] = CreateBasicAutoPreTrainedFileName(Parametrs,ChanNum)
+        Parametrs["AutoEncoder_LoadModelFilename"] = CreateBasicAutoPreTrainedFileName(Parametrs,CurrChan)
         RetList.append(AutoEncoderTrainChan(Data[CurrChan][:,:],Parametrs))
     return(RetList)

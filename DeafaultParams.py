@@ -1,16 +1,16 @@
 
 AutoEncoder_TrainParams = {
-    "Optimizer" : 'Adam',
+    "Optimizer" : 'Adamax',
     "Loss" : 'MSE',
     "batch_size" : 512,
-    "epochs" : 300,
+    "epochs" : 500,
     "Autoeoncoder_lastlayer_activation": 'linear'
 }
 
 AutoEncoder_LayerArg = {
     "Dense_Layer_Nodes" : 16,
-    "Dense_activation" : 'relu',
-    "Dropout_rate" : 0.2,
+    "Dense_activation" : 'elu',
+    "Dropout_rate" : 0.3,
     "CNN_Num_of_Filters" : 16,
     "CNN_Filter_Size" : 5,
     "CNN_Stride" : 1,
@@ -54,19 +54,20 @@ def InitFeatureExtractionDeafaultParametrs():
         "LDACL_doPlotInput" : 'false',
         "LDACL_extensionfilenameInput" : 'v15',
         "AutoEncoder_TrainParams": AutoEncoder_TrainParams,
-        "AutoEncoder_MLPStructure" : [128, 64, 32, 8],
+        "AutoEncoder_MLPStructure" : [70, 5],
         "AutoEncoder_CNNStructure" : [64, 32, 8],
         "AutoEncoder_LayerArgList" :  [AutoEncoder_LayerArg for x in range(0,20)],
-        "AutoEncoder_CNNModel" : True,
-        "AutoEncoder_GaussianNoiseStD" : 0.1,
-        "AutoEncoder_Normaliztion" : True,
-        "AutoEncoder_FeaturesFromNoisyData" : True,
-        "AutoEncoder_Seed": 101,
+        "AutoEncoder_CNNModel" : False,
+        "AutoEncoder_GaussianNoiseStD" : 0.0,
+        "AutoEncoder_Normaliztion" : False,
+        "AutoEncoder_FeaturesFromNoisyData" : False,
+        "AutoEncoder_Seed": 102,
         "AutoEncoder_SavedModelFilename": 'model',
         "AutoEncoder_ChanNum": 0,
         "AutoEncoder_LoadModelFilename": 'model',
         "AutoEncoder_LoadModel": False,
         "AutoEncoder_BaseModelEval": [0.0, 0.0],
+        "AutoEncoder_EarlyStopping_patience": 50,
         "AutoEncoder_test_size": 0.25,
         "AutoEncoder_CurrCVOuter": 0,
         "AutoEncoder_CurrCVInner": 0
