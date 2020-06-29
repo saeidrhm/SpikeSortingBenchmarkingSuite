@@ -6,6 +6,7 @@ from SSDWT import *
 from SSPCA import *
 from SSLDAGMM import *
 from SSTSNE import *
+from SSAE import *
 from LoadingData import *
 from DeafaultParams import *
 from ClusteringandEvaluation import *
@@ -44,6 +45,30 @@ def main():
     seed(CurrMainSeed)
     os.environ['PYTHONHASHSEED']=str(CurrMainSeed)
     random.seed(CurrMainSeed)
+    method = "AutoEncoder"
+    FeatureExtractionDeafaultParametrs = InitFeatureExtractionDeafaultParametrs()
+    FeatureExtractionDeafaultParametrs['method'] = method
+    ExtractedFeatures = FeatureExtraction(SpikeChannelDataList,FeatureExtractionDeafaultParametrs)
+    RetList = list()
+    for clusteringmethod in ['kmeans','GMM']:
+        ClusteringAndEvaluationDeafaultParametrs = InitClusteringAndEvaluationDeafaultParametrs()
+        ClusteringAndEvaluationDeafaultParametrs["NumofClusters"] = NoCells
+        ClusteringAndEvaluationDeafaultParametrs['ClusteringMethod'] = clusteringmethod
+        for CurrChan in range(0,NoChannels):
+            CurrContext = {
+            'CurrChan' : CurrChan,
+            'method' : method,
+            'clusteringmethod' : clusteringmethod
+            }
+            CurrEval = ClusteringAndEvaluation(ExtractedFeatures[CurrChan],SpikeChannelLabelList[CurrChan],ClusteringAndEvaluationDeafaultParametrs)
+            RetList.append([CurrContext,CurrEval])
+            print("CurrContext: "+str(CurrContext))
+            print("CurrEval: "+str(CurrEval))
+            ##save Retlist
+    SaveResult(str(method)+"_v1.pkl",RetList)
+    UltResList.append(RetList)
+    ##save or print Results
+    print(UltResList)
     UltResList = list()
     for method in ['PCA','DWT']:
         FeatureExtractionDeafaultParametrs = InitFeatureExtractionDeafaultParametrs()

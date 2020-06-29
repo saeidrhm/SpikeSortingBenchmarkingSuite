@@ -67,6 +67,7 @@ def InitFeatureExtractionDeafaultParametrs():
         "AutoEncoder_LoadModelFilename": 'model',
         "AutoEncoder_LoadModel": False,
         "AutoEncoder_BaseModelEval": [0.0, 0.0],
+        "AutoEncoder_test_size": 0.25,
         "AutoEncoder_CurrCVOuter": 0,
         "AutoEncoder_CurrCVInner": 0
 	}
