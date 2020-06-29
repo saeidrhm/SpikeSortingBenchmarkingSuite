@@ -3,10 +3,16 @@ from numpy.random import seed
 import os
 import random
 from SSDWT import *
+from SSPCA import *
 from LoadingData import *
 from DeafaultParams import *
 from ClusteringandEvaluation import *
 
+os.environ["OMP_NUM_THREADS"] = "3" # export OMP_NUM_THREADS
+os.environ["OPENBLAS_NUM_THREADS"] = "3" # export OPENBLAS_NUM_THREADS
+os.environ["MKL_NUM_THREADS"] = "3" # export MKL_NUM_THREADS
+os.environ["VECLIB_MAXIMUM_THREADS"] = "3" # export VECLIB_MAXIMUM_THREADS
+os.environ["NUMEXPR_NUM_THREADS"] = "3" # export NUMEXPR_NUM_THREADS
 
 def FeatureExtraction(Data,Parametrs):
     if Parametrs['method']=='PCA':
@@ -25,7 +31,7 @@ def FeatureExtraction(Data,Parametrs):
         print("Cant recognize the method!")
 
 def main():
-    TemplateNamePre = "spike_trains_cell_"
+    TemplateNamePre = "/home/saeid/spike_trains_cell_"
     TemplateNamePost = "_NoInh_6_NoExt_6_noise_25_SS_68_TS_11_RS_42_cell_based_overlapping_suppressed.npy"
     NoCells = 12
     NoChannels = 4
@@ -35,12 +41,13 @@ def main():
     os.environ['PYTHONHASHSEED']=str(CurrMainSeed)
     random.seed(CurrMainSeed)
     UltResList = list()
-    for method in ['DWT']:
+    for method in ['PCA','DWT']:
         FeatureExtractionDeafaultParametrs = InitFeatureExtractionDeafaultParametrs()
         FeatureExtractionDeafaultParametrs['method'] = method
         FeatureExtractionDeafaultParametrs['DWT_StrictDim'] = True
         for outdim in range(2,5):
             FeatureExtractionDeafaultParametrs['DWT_NumofDWTKstatInputLimit'] = outdim
+            FeatureExtractionDeafaultParametrs['PCA_OutDim'] = outdim
             ExtractedFeatures = FeatureExtraction(SpikeChannelDataList,FeatureExtractionDeafaultParametrs)
             RetList = list()
             for clusteringmethod in ['kmeans','GMM']:
@@ -51,7 +58,7 @@ def main():
                     CurrContext = {
                         'CurrChan' : CurrChan,
                         'method' : method,
-                        'DWT_OutDim' : outdim,
+                        'PCA_OutDim' : outdim,
                         'clusteringmethod' : clusteringmethod
                         }
                     CurrEval = ClusteringAndEvaluation(ExtractedFeatures[CurrChan],SpikeChannelLabelList[CurrChan],ClusteringAndEvaluationDeafaultParametrs)
@@ -63,7 +70,6 @@ def main():
             UltResList.append(RetList)
     ##save or print Results
     print(UltResList)
-
 
 
 if __name__ == "__main__":
