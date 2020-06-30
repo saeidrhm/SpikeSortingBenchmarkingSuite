@@ -2,16 +2,14 @@
 AutoEncoder_TrainParams = {
     "Optimizer" : 'Adamax',
     "Loss" : 'MSE',
-    "batch_size" : 512,
+    "batch_size" : 128,
     "epochs" : 500,
     "Autoeoncoder_lastlayer_activation": 'linear'
 }
 
 AutoEncoder_LayerArg = {
-    "Dense_Layer_Nodes" : 16,
     "Dense_activation" : 'elu',
     "Dropout_rate" : 0.3,
-    "CNN_Num_of_Filters" : 16,
     "CNN_Filter_Size" : 5,
     "CNN_Stride" : 1,
     "CNN_MaxPooling_Size" : 2
@@ -30,7 +28,7 @@ def InitFeatureExtractionDeafaultParametrs():
         "DWT_StrictDim":False,
         "SSLBC_SpikeLen": 128, ##128
         "SSLBC_AllLayerKernelInitializer": 'random_uniform',
-        "SSLBC_LossWeghts": [1.0, 10.0, 0.0],  ##[1, 0.5, 0.5]
+        "SSLBC_LossWeghts": [1.0, 1.0, 0.0],  ##[1, 0.5, 0.5]
         "SSLBC_GNoiseSD": 0.5,##percent of PTP
         "SSLBC_Seed": 101,
         "SSLBC_Normaliztion" : True,
@@ -41,8 +39,10 @@ def InitFeatureExtractionDeafaultParametrs():
         "SSLBC_CNNStructure":[64, 32, 8],
         "SSLBC_TrainParams": AutoEncoder_TrainParams,
         "SSLBC_LayerArgList":[AutoEncoder_LayerArg for x in range(0,20)],
-        "SSLBC_ClassLayerSize": 1024,
+        "SSLBC_ClassLayerSize": 512,
         "SSLBC_ClassLayerActivation": 'relu',
+        "SSLBC_Validation_Precent": 0.2,
+        "SSLBC_EarlyStopping_patience": 50,
         "LDACL_sortMethodInput" : 'LDAGMM',
         "LDACL_numClusRangeInput" : 6,
         "LDACL_DimInput" : 3,
@@ -68,7 +68,7 @@ def InitFeatureExtractionDeafaultParametrs():
         "AutoEncoder_LoadModel": False,
         "AutoEncoder_BaseModelEval": [0.0, 0.0],
         "AutoEncoder_EarlyStopping_patience": 50,
-        "AutoEncoder_test_size": 0.25,
+        "AutoEncoder_test_size": 0.2,
         "AutoEncoder_CurrCVOuter": 0,
         "AutoEncoder_CurrCVInner": 0
 	}

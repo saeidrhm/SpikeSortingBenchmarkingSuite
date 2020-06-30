@@ -7,6 +7,7 @@ from SSPCA import *
 from SSLDAGMM import *
 from SSTSNE import *
 from SSAE import *
+from SSSSLBC import *
 from LoadingData import *
 from DeafaultParams import *
 from ClusteringandEvaluation import *
@@ -45,6 +46,33 @@ def main():
     seed(CurrMainSeed)
     os.environ['PYTHONHASHSEED']=str(CurrMainSeed)
     random.seed(CurrMainSeed)
+    method = "SSLBC"
+    FeatureExtractionDeafaultParametrs = InitFeatureExtractionDeafaultParametrs()
+    FeatureExtractionDeafaultParametrs['method'] = method
+    if FeatureExtractionDeafaultParametrs['SSLBC_CNNModel']==True:
+        FeatureExtractionDeafaultParametrs['SSLBC_LayerArgList'] = [AutoEncoder_LayerArg for x in range(0,len(FeatureExtractionDeafaultParametrs['SSLBC_CNNStructure']))]
+    else:
+        FeatureExtractionDeafaultParametrs['SSLBC_LayerArgList'] = [AutoEncoder_LayerArg for x in range(0,len(FeatureExtractionDeafaultParametrs['SSLBC_MLPStructure']))]
+    ExtractedFeatures = FeatureExtraction(SpikeChannelDataList,FeatureExtractionDeafaultParametrs)
+    UltResList = list()
+    RetList = list()
+    for clusteringmethod in ['kmeans','GMM']:
+        ClusteringAndEvaluationDeafaultParametrs = InitClusteringAndEvaluationDeafaultParametrs()
+        ClusteringAndEvaluationDeafaultParametrs["NumofClusters"] = NoCells
+        ClusteringAndEvaluationDeafaultParametrs['ClusteringMethod'] = clusteringmethod
+        for CurrChan in range(0,NoChannels):
+            CurrContext = {
+            'CurrChan' : CurrChan,
+            'method' : method,
+            'clusteringmethod' : clusteringmethod
+            }
+            CurrEval = ClusteringAndEvaluation(ExtractedFeatures[CurrChan],SpikeChannelLabelList[CurrChan],ClusteringAndEvaluationDeafaultParametrs)
+            RetList.append([CurrContext,CurrEval])
+            print("CurrContext: "+str(CurrContext))
+            print("CurrEval: "+str(CurrEval))
+            ##save Retlist
+    SaveResult(str(method)+"_v1.pkl",RetList)
+    UltResList.append(RetList)
     method = "AutoEncoder"
     FeatureExtractionDeafaultParametrs = InitFeatureExtractionDeafaultParametrs()
     FeatureExtractionDeafaultParametrs['method'] = method
